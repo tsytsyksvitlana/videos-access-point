@@ -1,0 +1,77 @@
+services:
+  postgres:
+    container_name: postgres
+    image: "postgres:alpine"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
+    networks:
+      - home
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fastapi:
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - ./web_app:/code/web_app
+    command: ["python", "-m", "web_app.main"]
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.env
+    environment:
+      PYTHONPATH: /code
+    networks:
+      - home
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - home
+
+  postgres_test:
+    container_name: postgres_test
+    image: "postgres:alpine"
+    ports:
+      - "5433:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: meduzzenpass
+      POSTGRES_DB: test_meduzzen_db
+      POSTGRES_HOST: postgres_test
+      POSTGRES_PORT: 5432
+    networks:
+      - home
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - postgres_test
+    env_file:
+      - ./.env.test
+    networks:
+      - home
+
+volumes:
+  postgres_data:
+
+networks:
+  home:
+    driver: bridge

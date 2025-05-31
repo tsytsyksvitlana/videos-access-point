@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta, timezone, datetime
 
 import pytest
 from alembic.config import Config
@@ -14,7 +15,7 @@ from tests.config.postgres_config import test_postgres_settings
 from web_app.config.settings import settings
 from web_app.db.postgres_helper import postgres_helper
 from web_app.main import app
-from web_app.models import User
+from web_app.models import User, Video
 from web_app.models.base import Base
 from web_app.utils.password_manager import PasswordManager
 
@@ -107,6 +108,28 @@ async def create_test_users(db_session: AsyncSession):
     created_users = result.scalars().all()
 
     return created_users
+
+
+@pytest.fixture(scope="function")
+async def create_test_videos(db_session: AsyncSession, create_test_users):
+    user = create_test_users[0]
+    now = datetime.now(timezone.utc)
+
+    videos = [
+        Video(
+            title=f"Test Video {i}",
+            description=f"Description {i}",
+            genre="TestGenre" if i % 2 == 0 else "OtherGenre",
+            url=f"http://test.com/video{i}",
+            upload_date=now - timedelta(days=i),
+            user_id=user.id
+        )
+        for i in range(5)
+    ]
+
+    db_session.add_all(videos)
+    await db_session.commit()
+    return videos
 
 
 @pytest.fixture(scope="function")

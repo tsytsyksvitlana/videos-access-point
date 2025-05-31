@@ -23,6 +23,7 @@ from web_app.logging.logger import setup_logger
 from web_app.routers.auth import router as auth_router
 from web_app.routers.healthcheck import router as router
 from web_app.routers.users import router as users_router
+from web_app.routers.videos import router as videos_router
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ auth_header = HTTPBearer()
 app.include_router(router)
 app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(videos_router, prefix="/videos", tags=["videos"])
 
 origins = [
     f"http://{settings.fastapi.SERVER_HOST}:{settings.fastapi.SERVER_PORT}",

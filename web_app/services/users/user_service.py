@@ -7,7 +7,7 @@ from web_app.exceptions.users import (
     UserIdAlreadyExistsException,
     UserIdNotFoundException
 )
-from web_app.models import User
+from web_app.models.user import User
 from web_app.repositories.user_repository import UserRepository
 from web_app.schemas.user import SignUpRequestModel, UserUpdateRequestModel
 from web_app.utils.password_manager import PasswordManager

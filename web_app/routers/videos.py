@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 
 from web_app.models import User
 from web_app.schemas.video import VideoCreate, VideoOut
@@ -42,8 +42,8 @@ async def get_latest_videos_by_genre(
 
 @router.get("/date-range", response_model=list[VideoOut])
 async def get_videos_by_date_range(
-    start_date: datetime,
-    end_date: datetime,
+    start_date: datetime | None = Query(None),
+    end_date: datetime | None = Query(None),
     video_service: VideoService = Depends(get_video_service)
 ):
     return await video_service.get_videos_by_date_range(start_date, end_date)

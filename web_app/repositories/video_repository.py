@@ -31,12 +31,14 @@ class VideoRepository(BaseRepository[Video]):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_videos_by_date_range(self, start_date: datetime, end_date: datetime) -> list[Video]:
-        query = (
-            select(Video)
-            .where(Video.upload_date >= start_date, Video.upload_date <= end_date)
-            .order_by(Video.upload_date.desc())
-        )
+    async def get_videos_by_date_range(self, start_date: datetime | None, end_date: datetime | None) -> list[Video]:
+        query = select(Video)
+        if start_date:
+            query = query.where(Video.upload_date >= start_date)
+        if end_date:
+            query = query.where(Video.upload_date <= end_date)
+        query = query.order_by(Video.upload_date.desc())
+
         result = await self.session.execute(query)
         return result.scalars().all()
 

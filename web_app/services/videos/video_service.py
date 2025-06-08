@@ -22,7 +22,7 @@ class VideoService:
     async def get_latest_videos_by_genre(self, genre: str, limit: int = 100) -> list[Video]:
         return await self.video_repository.get_latest_videos_by_genre(genre, limit)
 
-    async def get_videos_by_date_range(self, start_date: datetime, end_date: datetime) -> list[Video]:
+    async def get_videos_by_date_range(self, start_date: datetime | None, end_date: datetime | None) -> list[Video]:
         return await self.video_repository.get_videos_by_date_range(start_date, end_date)
 
     async def create_video(self, video_data: VideoCreate, user_id: int) -> Video:

@@ -51,8 +51,10 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(videos_router, prefix="/videos", tags=["videos"])
 
 origins = [
+    "http://localhost:5173",
     f"http://{settings.fastapi.SERVER_HOST}:{settings.fastapi.SERVER_PORT}",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,

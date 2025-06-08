@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from web_app.models.video import Video
 from web_app.repositories.video_repository import VideoRepository
 from web_app.schemas.video import VideoCreate
 from web_app.services.videos.video_service import VideoService
@@ -43,18 +42,6 @@ async def test_video_service_get_video_by_url(db_session: AsyncSession, create_t
     assert video.url == target_video.url
 
 
-async def test_video_service_get_videos_by_date_range(db_session: AsyncSession, create_test_videos):
-    video_repo = VideoRepository(session=db_session)
-    video_service = VideoService(video_repo)
-
-    start_date = datetime.now(timezone.utc) - timedelta(days=4)
-    end_date = datetime.now(timezone.utc)
-
-    videos = await video_service.get_videos_by_date_range(start_date, end_date)
-
-    assert all(start_date <= video.upload_date <= end_date for video in videos)
-
-
 async def test_video_service_get_latest_videos_by_genre(db_session: AsyncSession, create_test_videos):
     video_repo = VideoRepository(session=db_session)
     video_service = VideoService(video_repo)
@@ -75,4 +62,3 @@ async def test_video_service_get_videos_by_date_range(db_session: AsyncSession, 
     videos = await video_service.get_videos_by_date_range(start_date, end_date)
 
     assert all(start_date <= video.upload_date <= end_date for video in videos)
-

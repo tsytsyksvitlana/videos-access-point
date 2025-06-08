@@ -25,14 +25,14 @@ async def create_video(
     return created_video
 
 
-@router.get("/videos/latest", response_model=list[VideoOut])
+@router.get("/latest", response_model=list[VideoOut])
 async def get_latest_videos(
     video_service: VideoService = Depends(get_video_service)
 ):
     return await video_service.get_latest_videos()
 
 
-@router.get("/videos/latest/{genre}", response_model=list[VideoOut])
+@router.get("/latest/{genre}", response_model=list[VideoOut])
 async def get_latest_videos_by_genre(
     genre: str,
     video_service: VideoService = Depends(get_video_service)
@@ -40,7 +40,7 @@ async def get_latest_videos_by_genre(
     return await video_service.get_latest_videos_by_genre(genre)
 
 
-@router.get("/videos/date-range", response_model=list[VideoOut])
+@router.get("/date-range", response_model=list[VideoOut])
 async def get_videos_by_date_range(
     start_date: datetime,
     end_date: datetime,
@@ -49,7 +49,7 @@ async def get_videos_by_date_range(
     return await video_service.get_videos_by_date_range(start_date, end_date)
 
 
-@router.get("/videos/{video_id}", response_model=VideoOut)
+@router.get("/{video_id}", response_model=VideoOut)
 async def get_video_by_id(
     video_id: int,
     video_service: VideoService = Depends(get_video_service)
@@ -60,7 +60,7 @@ async def get_video_by_id(
     return video
 
 
-@router.get("/videos/by-title/{title}", response_model=VideoOut)
+@router.get("/by-title/{title}", response_model=VideoOut)
 async def get_video_by_title(
     title: str,
     video_service: VideoService = Depends(get_video_service)
